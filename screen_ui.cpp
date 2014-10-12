@@ -365,14 +365,14 @@ void ScreenRecoveryUI::progress_loop() {
 }
 
 void ScreenRecoveryUI::LoadBitmap(const char* filename, gr_surface* surface) {
-    int result = res_create_surface(filename, surface);
+    int result = res_create_display_surface(filename, surface);
     if (result < 0) {
         LOGE("missing bitmap %s\n(Code %d)\n", filename, result);
     }
 }
 
 void ScreenRecoveryUI::LoadLocalizedBitmap(const char* filename, gr_surface* surface) {
-    int result = res_create_localized_surface(filename, surface);
+    int result = res_create_localized_alpha_surface(filename, locale, surface);
     if (result < 0) {
         LOGE("missing bitmap %s\n(Code %d)\n", filename, result);
     }
@@ -437,8 +437,9 @@ void ScreenRecoveryUI::Init()
     RecoveryUI::Init();
 }
 
-void ScreenRecoveryUI::SetLocale(const char* locale) {
-    if (locale) {
+void ScreenRecoveryUI::SetLocale(const char* new_locale) {
+    if (new_locale) {
+        this->locale = new_locale;
         char* lang = strdup(locale);
         for (char* p = lang; *p; ++p) {
             if (*p == '_') {
@@ -457,6 +458,8 @@ void ScreenRecoveryUI::SetLocale(const char* locale) {
             rtl_locale = true;
         }
         free(lang);
+    } else {
+        new_locale = NULL;
     }
 }
 
